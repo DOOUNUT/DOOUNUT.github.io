@@ -1,11 +1,11 @@
 {
-  "homepage": "https://<username>.github.io",
+  "homepage": "https://doounut.github.io",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",
