@@ -1,0 +1,179 @@
+
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      width: 1440px;
+      height: 1000px;
+      display: grid;
+      place-items: center;
+      background: #eef4fb;
+      font-family: Arial, "Noto Sans KR", sans-serif;
+      color: #1d2735;
+    }
+    .itda {
+      width: 1180px;
+      height: 760px;
+      display: grid;
+      grid-template-columns: 360px 1fr 300px;
+      overflow: hidden;
+      border-radius: 28px;
+      background: #fff;
+      box-shadow: 0 30px 80px rgba(37, 70, 112, .22);
+    }
+    .rooms {
+      padding: 28px;
+      background: #f8fbff;
+      border-right: 1px solid #dde7f2;
+    }
+    .brand {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 26px;
+      font-weight: 900;
+      font-size: 28px;
+      color: #2587d8;
+    }
+    .plus {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: #2587d8;
+      color: #fff;
+      font-size: 28px;
+    }
+    .room {
+      padding: 18px;
+      margin-bottom: 14px;
+      border-radius: 18px;
+      background: #fff;
+      border: 1px solid #d9e7f4;
+    }
+    .room.active {
+      border-color: #2587d8;
+      box-shadow: 0 12px 26px rgba(37, 135, 216, .16);
+    }
+    .room strong { display: block; margin-bottom: 8px; }
+    .room span { color: #708095; font-size: 14px; }
+    .chat {
+      display: grid;
+      grid-template-rows: 86px 1fr 86px;
+      background: #fff;
+    }
+    .chat-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      border-bottom: 1px solid #e5edf5;
+    }
+    .chat-head strong { font-size: 20px; }
+    .badge {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: #e8f4ff;
+      color: #2587d8;
+      font-size: 13px;
+      font-weight: 800;
+    }
+    .messages {
+      padding: 30px;
+      background: linear-gradient(#fbfdff, #f5f9fd);
+    }
+    .bubble {
+      max-width: 420px;
+      padding: 15px 18px;
+      margin-bottom: 16px;
+      border-radius: 18px;
+      line-height: 1.45;
+      font-size: 15px;
+    }
+    .left { background: #fff; border: 1px solid #dfe8f2; }
+    .right { margin-left: auto; background: #2587d8; color: #fff; }
+    .system {
+      width: max-content;
+      margin: 4px auto 18px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: #e8f4ff;
+      color: #2587d8;
+      font-size: 13px;
+    }
+    .input {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 20px 28px;
+      border-top: 1px solid #e5edf5;
+    }
+    .input div {
+      flex: 1;
+      padding: 14px 18px;
+      border-radius: 999px;
+      background: #f1f6fb;
+      color: #8a98aa;
+    }
+    .send {
+      padding: 14px 18px;
+      border-radius: 999px;
+      background: #2587d8;
+      color: white;
+      font-weight: 900;
+    }
+    .side {
+      padding: 28px;
+      background: #0f1724;
+      color: white;
+    }
+    .side h2 { margin: 0 0 20px; }
+    .alarm {
+      padding: 16px;
+      margin-bottom: 14px;
+      border: 1px solid rgba(255,255,255,.13);
+      border-radius: 16px;
+      background: rgba(255,255,255,.06);
+    }
+    .alarm span {
+      display: block;
+      margin-top: 8px;
+      color: #9fd4ff;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <main class="itda">
+    <section class="rooms">
+      <div class="brand">ITDA <div class="plus">+</div></div>
+      <div class="room active"><strong>동네 개발자 오픈채팅</strong><span>참여 18명 · 방금 새 메시지</span></div>
+      <div class="room"><strong>노트북 대여 문의</strong><span>거래 채팅 · 마지막 메시지 3분 전</span></div>
+      <div class="room"><strong>경매 낙찰자 채팅</strong><span>경매 채팅 · 알림 2개</span></div>
+      <div class="room"><strong>나눔 거래방</strong><span>나눔 채팅 · 읽음</span></div>
+    </section>
+    <section class="chat">
+      <div class="chat-head"><strong>동네 개발자 오픈채팅</strong><span class="badge">WebSocket Connected</span></div>
+      <div class="messages">
+        <div class="system">기석님이 오픈채팅방을 생성했습니다.</div>
+        <div class="bubble left">혹시 Spring WebSocket 연결 확인해보신 분 있나요?</div>
+        <div class="bubble right">STOMP 구독 경로랑 roomId 전달 흐름을 같이 확인하면 됩니다.</div>
+        <div class="bubble left">오 알림도 바로 들어오네요!</div>
+        <div class="bubble right">채팅 메시지 전송 후 참여자에게 실시간 알림을 보내도록 처리했습니다.</div>
+      </div>
+      <div class="input"><div>메시지를 입력하세요</div><span class="send">전송</span></div>
+    </section>
+    <aside class="side">
+      <h2>실시간 알림</h2>
+      <div class="alarm">새 채팅 메시지가 도착했습니다.<span>CHAT · 방금 전</span></div>
+      <div class="alarm">오픈채팅방 생성 완료<span>OPENCHAT · 1분 전</span></div>
+      <div class="alarm">거래 채팅방으로 이동 가능<span>ROOM · 3분 전</span></div>
+    </aside>
+  </main>
+</body>
+</html>
