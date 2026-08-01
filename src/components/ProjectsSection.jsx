@@ -112,7 +112,10 @@ export default function ProjectsSection() {
                       <button
                         type="button"
                         aria-label={text.closeCode}
-                        onClick={() => setActiveSnippet(null)}
+                        onClick={() => {
+                          setActiveSnippet(null);
+                          setActivePartIndex(null);
+                        }}
                       >
                         x
                       </button>
@@ -188,3 +191,4 @@ export default function ProjectsSection() {
     </Section>
   );
 }
+
