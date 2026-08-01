@@ -1,4 +1,4 @@
-:root {
+﻿:root {
   color-scheme: dark;
   --bg: #070a13;
   --sidebar: #0b0f1c;
@@ -875,5 +875,238 @@ pre {
   .reveal {
     opacity: 1;
     transform: none;
+  }
+}
+
+.part-list li {
+  cursor: pointer;
+}
+
+.part-list li.active {
+  border-color: rgba(56, 125, 250, 0.9);
+  background: rgba(56, 125, 250, 0.16);
+}
+
+/* Project detail polish */
+.projects-layout {
+  display: grid;
+  gap: 24px;
+}
+
+.project-card-meta,
+.project-techs,
+.detail-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.project-card-meta span,
+.project-techs span,
+.detail-tag {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 6px 10px;
+  border: 1px solid rgba(56, 69, 99, 0.76);
+  border-radius: 8px;
+  background: rgba(18, 23, 42, 0.82);
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.project-techs {
+  margin-top: 18px;
+}
+
+.project-techs span {
+  border-color: rgba(56, 125, 250, 0.34);
+  color: var(--text);
+}
+
+.project-detail {
+  position: relative;
+  align-items: start;
+  padding: 28px;
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.24);
+}
+
+.detail-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 2;
+  display: inline-grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  min-width: 34px;
+  min-height: 34px;
+  padding: 0;
+  border: 1px solid rgba(56, 69, 99, 0.85);
+  border-radius: 999px;
+  background: rgba(18, 23, 42, 0.94);
+  color: var(--muted);
+  font-size: 16px;
+  font-weight: 900;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.26);
+  transition: color 160ms ease, border-color 160ms ease, background 160ms ease, transform 160ms ease;
+}
+
+.detail-close:hover {
+  color: var(--text);
+  border-color: rgba(56, 125, 250, 0.8);
+  background: rgba(56, 125, 250, 0.18);
+  transform: translateY(-1px);
+}
+
+.detail-content {
+  display: grid;
+  gap: 18px;
+  padding-right: 16px;
+}
+
+.detail-list {
+  display: grid;
+  gap: 12px;
+}
+
+.detail-list > strong {
+  color: var(--text);
+  font-size: 15px;
+}
+
+.detail-list > ul:not(.part-list) li {
+  padding: 11px 13px;
+  border: 1px solid rgba(56, 69, 99, 0.62);
+  border-radius: 10px;
+  background: rgba(13, 18, 32, 0.72);
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+.detail-actions a,
+.detail-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid rgba(56, 125, 250, 0.55);
+  border-radius: 8px;
+  background: rgba(56, 125, 250, 0.12);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: border-color 160ms ease, background 160ms ease, transform 160ms ease;
+}
+
+.detail-actions a:hover,
+.detail-actions button:hover {
+  border-color: var(--blue);
+  background: rgba(56, 125, 250, 0.2);
+  transform: translateY(-1px);
+}
+
+@media (max-width: 720px) {
+  .project-detail {
+    padding: 22px;
+  }
+
+  .detail-close {
+    top: 10px;
+    right: 10px;
+  }
+
+  .detail-content {
+    padding-right: 0;
+  }
+}
+
+/* Project detail without features */
+.detail-list > ul:not(.part-list) {
+  display: none;
+}
+
+.project-detail .detail-content {
+  gap: 20px;
+}
+
+.detail-image img {
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.part-list li.active {
+  border-color: rgba(56, 125, 250, 0.9);
+  background: rgba(56, 125, 250, 0.16);
+}
+
+/* Project code editor UI */
+.project-detail {
+  align-items: stretch;
+}
+
+.detail-image {
+  display: grid;
+  place-items: center;
+  min-height: 420px;
+}
+
+.detail-image img {
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  max-height: 430px;
+  object-fit: contain;
+  object-position: center;
+}
+
+.key-code-preview {
+  border-radius: 14px;
+  background: #080b14;
+  box-shadow: 0 18px 54px rgba(0, 0, 0, 0.28);
+}
+
+.key-code-preview .window-bar {
+  min-height: 42px;
+}
+
+.key-code-preview .window-bar p {
+  overflow: hidden;
+  color: var(--muted);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.key-code-preview pre {
+  overflow: auto;
+  max-height: 520px;
+  padding: 24px;
+  color: #d8e2ff;
+  font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+  font-size: 13px;
+  line-height: 1.72;
+  white-space: pre;
+}
+
+.key-code-preview code {
+  font: inherit;
+}
+
+.detail-actions button {
+  display: none;
+}
+
+@media (max-width: 1080px) {
+  .detail-image {
+    min-height: 320px;
+  }
+
+  .detail-image img {
+    max-height: 360px;
   }
 }

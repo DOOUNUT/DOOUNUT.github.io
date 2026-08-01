@@ -1,109 +1,190 @@
-import { useState } from 'react';
-import { Code2, X } from 'lucide-react';
-import { projects } from '../data/portfolioData';
+﻿import { useState } from 'react';
 import Section from './Section';
+import { projects } from '../data/portfolioData';
+
+const text = {
+  eyebrow: 'Projects',
+  title: '\uc9c1\uc811 \uad6c\ud604\ud558\uace0 \ubb38\uc81c\ub97c \ud574\uacb0\ud55c \ud504\ub85c\uc81d\ud2b8',
+  description:
+    '\uce74\ub4dc\ub97c \uc120\ud0dd\ud558\uba74 \ud504\ub85c\uc81d\ud2b8\ubcc4 \uba54\uc778 \ud654\uba74\uacfc \ub2f4\ub2f9 \uad6c\ud604 \ub0b4\uc6a9\uc744 \ud655\uc778\ud560 \uc218 \uc788\uc2b5\ub2c8\ub2e4.',
+  mainAlt: '\uba54\uc778 \ud654\uba74',
+  detailAlt: '\uc0c1\uc138 \ud654\uba74',
+  closeDetail: '\ud504\ub85c\uc81d\ud2b8 \uc0c1\uc138 \ub2eb\uae30',
+  myPart: '\ub0b4\uac00 \ub9e1\uc740 \ubd80\ubd84',
+  keyCode: 'Key Code',
+  closeCode: '\uc8fc\uc694 \ucf54\ub4dc \ub2eb\uae30',
+  viewCode: '\uc8fc\uc694 \ucf54\ub4dc \ubcf4\uae30',
+};
+
+const getTechs = (project) => project.techs ?? project.tech ?? [];
+const getDescription = (project) => project.detail ?? project.description ?? project.summary ?? '';
+const getPartDescription = (part) => part.description ?? part.body ?? '';
 
 export default function ProjectsSection() {
   const [selectedProject, setSelectedProject] = useState(null);
   const [activeSnippet, setActiveSnippet] = useState(null);
+  const [activePartIndex, setActivePartIndex] = useState(null);
+
+  const activePart =
+    selectedProject && activePartIndex !== null ? selectedProject.myPart?.[activePartIndex] : null;
+
   const selectedSnippet =
-    selectedProject && activeSnippet !== null ? selectedProject.codeSnippets[activeSnippet] : null;
+    selectedProject && activeSnippet !== null ? selectedProject.codeSnippets?.[activeSnippet] : null;
+
+  const detailImage = activePart?.image || selectedProject?.image;
+
+  const selectPart = (index) => {
+    setActivePartIndex(index);
+    setActiveSnippet(null);
+  };
 
   return (
-    <Section id="projects" eyebrow="SELECTED WORK" title="Projects">
-      <div className="project-grid">
-        {projects.map((project) => (
-          <button
-            className={selectedProject?.name === project.name ? 'project-card selected' : 'project-card'}
-            key={project.name}
-            type="button"
-            onClick={() => {
-              setSelectedProject(project);
-              setActiveSnippet(null);
-            }}
-          >
-            <div className="project-image">
-              <img src={project.image} alt={`${project.name} 화면`} />
-            </div>
-            <div className="project-body">
-              <p className="eyebrow">{project.period}</p>
-              <h3>{project.name}</h3>
-              <p>{project.summary}</p>
-              <div className="badges">
-                {project.tech.map((item) => <span key={item}>{item}</span>)}
+    <Section
+      id="projects"
+      eyebrow={text.eyebrow}
+      title={text.title}
+      description={text.description}
+    >
+      <div className="projects-layout">
+        <div className="project-grid">
+          {projects.map((project) => (
+            <article
+              className={`project-card ${selectedProject?.name === project.name ? 'selected' : ''}`}
+              key={project.name}
+              onClick={() => {
+                setSelectedProject(project);
+                setActiveSnippet(null);
+                setActivePartIndex(null);
+              }}
+            >
+              <div className="project-image">
+                <img src={project.image} alt={`${project.name} ${text.mainAlt}`} />
               </div>
-            </div>
-          </button>
-        ))}
-      </div>
-
-      {selectedProject && (
-        <article className="project-detail reveal is-visible">
-          <div className="detail-image">
-            <img src={selectedProject.image} alt={`${selectedProject.name} 상세 화면`} />
-          </div>
-          <div className="detail-content">
-            <p className="eyebrow">PROJECT DETAIL</p>
-            <h3>{selectedProject.name}</h3>
-            <p>{selectedProject.description}</p>
-            <div className="detail-meta">
-              <span>기간: {selectedProject.period}</span>
-              <span>인원: {selectedProject.team}</span>
-              <span>역할: {selectedProject.role}</span>
-            </div>
-            {selectedSnippet ? (
-              <div className="code-modal-panel">
-                <div className="code-modal-title">
-                  <div>
-                    <p className="eyebrow">SOURCE VIEW</p>
-                    <h4>{selectedSnippet.title}</h4>
-                  </div>
-                  <button type="button" aria-label="코드 닫기" onClick={() => setActiveSnippet(null)}>
-                    <X size={18} />
-                  </button>
+              <div className="project-body">
+                <div className="project-card-meta">
+                  <span>{project.period}</span>
+                  <span>{project.team}</span>
                 </div>
-                <article className="code-snippet code-preview">
-                  <div className="window-bar">
-                    <span />
-                    <span />
-                    <span />
-                    <p>{selectedSnippet.path}</p>
-                  </div>
-                  <pre><code>{selectedSnippet.code}</code></pre>
-                </article>
+                <h3>{project.name}</h3>
+                <p>{project.summary}</p>
+                <div className="project-techs">
+                  {getTechs(project).map((tech) => (
+                    <span key={tech}>{tech}</span>
+                  ))}
+                </div>
               </div>
-            ) : (
-              <>
-                <h4>{selectedProject.detailTitle}</h4>
-                <ul className="part-list">
-                  {selectedProject.myPart.map((item) => {
-                    const snippet = selectedProject.codeSnippets[item.codeSnippet];
+            </article>
+          ))}
+        </div>
 
-                    return (
-                      <li key={item.title}>
-                        <div className="part-copy">
-                          <strong>{item.title}</strong>
-                          <span>{item.body}</span>
-                        </div>
-                        {snippet && (
-                          <button
-                            className="part-code-button"
-                            type="button"
-                            onClick={() => setActiveSnippet(item.codeSnippet)}
-                          >
-                            <Code2 size={15} />
-                            주요 코드 보기
-                          </button>
-                        )}
-                      </li>
-                    );
-                  })}
-                </ul>
-              </>
-            )}
-          </div>
-        </article>
-      )}
+        {selectedProject && (
+          <aside className="project-detail">
+            <button
+              className="detail-close"
+              type="button"
+              aria-label={text.closeDetail}
+              onClick={() => {
+                setSelectedProject(null);
+                setActiveSnippet(null);
+                setActivePartIndex(null);
+              }}
+            >
+              x
+            </button>
+            <div className="detail-image">
+              <img src={detailImage} alt={`${selectedProject.name} ${text.detailAlt}`} />
+            </div>
+            <div className="detail-content">
+              <span className="detail-tag">{selectedProject.role}</span>
+              <h3>{selectedProject.name}</h3>
+              <p>{getDescription(selectedProject)}</p>
+
+              <div className="detail-list">
+                <strong>{text.myPart}</strong>
+
+                {selectedSnippet ? (
+                  <div className="code-modal-panel inline">
+                    <div className="code-modal-title">
+                      <div>
+                        <span className="detail-tag">{text.keyCode}</span>
+                        <h4>{selectedSnippet.title}</h4>
+                      </div>
+                      <button
+                        type="button"
+                        aria-label={text.closeCode}
+                        onClick={() => setActiveSnippet(null)}
+                      >
+                        x
+                      </button>
+                    </div>
+                    {selectedSnippet.description && <p>{selectedSnippet.description}</p>}
+                    <div className="code-preview key-code-preview">
+                      <div className="window-bar">
+                        <span />
+                        <span />
+                        <span />
+                        <p>{selectedSnippet.path ?? selectedSnippet.title}</p>
+                      </div>
+                      <pre>
+                        <code>{selectedSnippet.code}</code>
+                      </pre>
+                    </div>
+                  </div>
+                ) : (
+                  <ul className="part-list">
+                    {(selectedProject.myPart ?? []).map((item, index) => {
+                      const snippet = selectedProject.codeSnippets?.[item.codeSnippet];
+                      const isActive = activePartIndex === index;
+
+                      return (
+                        <li
+                          className={isActive ? 'active' : ''}
+                          key={item.title}
+                          role="button"
+                          tabIndex={0}
+                          onClick={() => selectPart(index)}
+                          onKeyDown={(event) => {
+                            if (event.key === 'Enter' || event.key === ' ') {
+                              event.preventDefault();
+                              selectPart(index);
+                            }
+                          }}
+                        >
+                          <div className="part-copy">
+                            <b>{item.title}</b>
+                            <span>{getPartDescription(item)}</span>
+                          </div>
+                          {snippet && (
+                            <button
+                              type="button"
+                              className="part-code-button"
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                setActivePartIndex(index);
+                                setActiveSnippet(item.codeSnippet);
+                              }}
+                            >
+                              {text.viewCode}
+                            </button>
+                          )}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
+              </div>
+
+              {selectedProject.github && (
+                <div className="detail-actions">
+                  <a href={selectedProject.github} target="_blank" rel="noreferrer">
+                    GitHub
+                  </a>
+                </div>
+              )}
+            </div>
+          </aside>
+        )}
+      </div>
     </Section>
   );
 }

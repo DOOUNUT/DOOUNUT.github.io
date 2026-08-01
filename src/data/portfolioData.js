@@ -1,7 +1,12 @@
-import { Code2, Database, Layers3, Smartphone, Wrench } from 'lucide-react';
+﻿import { Code2, Database, Layers3, Smartphone, Wrench } from 'lucide-react';
 import albaImage from '../assets/projects/alba-app.png';
 import itdaImage from '../assets/projects/itda-chat.png';
+import itdaMainScreen from '../assets/projects/itda-main-screen.png';
+import itdaChatScreen from '../assets/projects/itda-chat-screen.png';
+import mbtiLoginImage from '../assets/projects/mbti-login.png';
+import mbtiMainImage from '../assets/projects/mbti-main.png';
 import mbtiImage from '../assets/projects/mbti-mypage.png';
+import mbtiMainScreen from '../assets/projects/mbti-main-screen.png';
 
 export const navItems = ['About', 'Skills', 'Projects', 'Experience', 'Contact'];
 
@@ -72,113 +77,158 @@ export const projects = [
     summary: '아르바이트 일정 및 급여 관리 모바일 앱',
     period: 'Personal Project',
     team: '개인 프로젝트',
-    role: 'Flutter · Firebase',
+    role: 'Flutter · Hive',
     imageLabel: 'Schedule · Pay · Mobile UX',
-    tech: ['Flutter', 'Dart', 'Firebase'],
+    tech: ['Flutter', 'Dart', 'Hive', 'table_calendar'],
     detailTitle: '핵심 구현',
     description:
-      '아르바이트 근무 일정과 예상 급여를 관리하는 모바일 앱입니다. 모바일 환경에서 빠르게 확인하고 입력할 수 있는 UI 흐름을 중심으로 설계했습니다.',
+      '아르바이트 근무지, 실제 근무 기록, 급여 통계, 월간 캘린더, 익명 커뮤니티를 관리하는 모바일 앱입니다. Hive 로컬 저장소와 Flutter 위젯 구조를 기반으로 빠르게 기록하고 확인할 수 있는 흐름을 구성했습니다.',
     codeSnippets: [
       {
-        title: '근무 일정 등록 화면 흐름',
-        path: 'lib/screens/work_schedule_screen.dart',
+        title: 'Hive 기반 로컬 저장소 초기화',
+        path: 'lib/main.dart',
         code: [
-          'class WorkScheduleScreen extends StatefulWidget {',
-          '  const WorkScheduleScreen({super.key});',
+          'Future<void> main() async {',
+          '  WidgetsFlutterBinding.ensureInitialized();',
+          '  await Hive.initFlutter();',
           '',
-          '  @override',
-          '  State<WorkScheduleScreen> createState() => _WorkScheduleScreenState();',
+          '  await Hive.openBox<Map>(HiveJobRepository.boxName);',
+          '  await Hive.openBox<Map>(HiveWorkRecordRepository.boxName);',
+          '  await Hive.openBox<Map>(HiveUserProfileRepository.boxName);',
+          '',
+          '  runApp(const AlbaManagementApp());',
+          '}'
+        ].join('\n')
+      },
+      {
+        title: '근무 시간과 급여 계산',
+        path: 'lib/utils/work_time_calculator.dart',
+        code: [
+          'static int calculateActualWorkedMinutes({',
+          '  required int startHour,',
+          '  required int startMinute,',
+          '  required int endHour,',
+          '  required int endMinute,',
+          '  required int breakMinutes,',
+          '}) {',
+          '  final totalMinutes = calculateTotalMinutes(',
+          '    startHour: startHour,',
+          '    startMinute: startMinute,',
+          '    endHour: endHour,',
+          '    endMinute: endMinute,',
+          '  );',
+          '',
+          '  return (totalMinutes - breakMinutes).clamp(0, totalMinutes).toInt();',
           '}',
           '',
-          'class _WorkScheduleScreenState extends State<WorkScheduleScreen> {',
-          '  DateTime selectedDate = DateTime.now();',
-          '  TimeOfDay startTime = const TimeOfDay(hour: 9, minute: 0);',
-          '  TimeOfDay endTime = const TimeOfDay(hour: 18, minute: 0);',
+          'static int calculatePay({',
+          '  required int workedMinutes,',
+          '  required int hourlyWage,',
+          '}) {',
+          '  return (workedMinutes * hourlyWage / 60).round();',
+          '}'
+        ].join('\n')
+      },
+      {
+        title: '근무 기록 Hive 저장소',
+        path: 'lib/repositories/hive_work_record_repository.dart',
+        code: [
+          'class HiveWorkRecordRepository implements WorkRecordRepository {',
+          '  static const String boxName = "work_records";',
+          '  Box<Map> get _box => Hive.box<Map>(boxName);',
           '',
-          '  void saveSchedule() {',
-          '    final schedule = WorkSchedule(',
-          '      date: selectedDate,',
-          '      startTime: startTime,',
-          '      endTime: endTime,',
-          '    );',
-          '    scheduleRepository.save(schedule);',
+          '  Future<void> addRecord(WorkRecord record) async {',
+          '    await _box.put(record.id, record.toMap());',
+          '  }',
+          '',
+          '  Future<List<WorkRecord>> getRecordsByMonth(String jobId, DateTime month) async {',
+          '    final records = await getRecordsByJobId(jobId);',
+          '    return records.where((record) {',
+          '      return record.workDate.year == month.year &&',
+          '          record.workDate.month == month.month;',
+          '    }).toList(growable: false);',
           '  }',
           '}'
         ].join('\n')
       },
       {
-        title: '예상 급여 계산 로직',
-        path: 'lib/features/pay/pay_calculator.dart',
+        title: '월간 캘린더 일정/실근무 표시',
+        path: 'lib/screens/calendar_screen.dart',
         code: [
-          'int calculateExpectedPay({',
-          '  required int hourlyWage,',
-          '  required int workMinutes,',
-          '  int breakMinutes = 0,',
-          '}) {',
-          '  final paidMinutes = workMinutes - breakMinutes;',
-          '  return ((hourlyWage / 60) * paidMinutes).floor();',
+          'List<CalendarEvent> get scheduledEvents {',
+          '  return CalendarUtils.buildScheduledEvents(',
+          '    jobs: filteredJobs,',
+          '    month: focusedMonth,',
+          '  );',
+          '}',
+          '',
+          'List<CalendarEvent> get actualEvents {',
+          '  return CalendarUtils.buildActualEvents(',
+          '    jobs: filteredJobs,',
+          '    records: filteredRecords,',
+          '  );',
+          '}',
+          '',
+          'Map<String, List<CalendarEvent>> get groupedEvents {',
+          '  return CalendarUtils.groupEventsByDate([...scheduledEvents, ...actualEvents]);',
           '}'
         ].join('\n')
       },
       {
-        title: 'Firebase 저장 데이터 구조',
-        path: 'lib/repositories/schedule_repository.dart',
+        title: '익명 댓글 추가 흐름',
+        path: 'lib/screens/community/community_post_detail_screen.dart',
         code: [
-          'Future<void> save(WorkSchedule schedule) async {',
-          '  await FirebaseFirestore.instance.collection("schedules").add({',
-          '    "date": schedule.date.toIso8601String(),',
-          '    "startTime": schedule.startTimeText,',
-          '    "endTime": schedule.endTimeText,',
-          '    "hourlyWage": schedule.hourlyWage,',
-          '    "createdAt": FieldValue.serverTimestamp(),',
+          'void addComment() {',
+          '  final text = commentController.text.trim();',
+          '  if (text.isEmpty) return;',
+          '',
+          '  setState(() {',
+          '    comments.insert(',
+          '      0,',
+          '      CommunityComment(',
+          '        anonymousName: "익명 ${comments.length + 3}",',
+          '        content: text,',
+          '        createdAt: DateTime.now(),',
+          '      ),',
+          '    );',
+          '    post = post.copyWith(commentCount: post.commentCount + 1);',
+          '    commentController.clear();',
           '  });',
-          '}'
-        ].join('\n')
-      },
-      {
-        title: '앱 실행 오류 로그 확인',
-        path: 'lib/main.dart',
-        code: [
-          'Future<void> main() async {',
-          '  WidgetsFlutterBinding.ensureInitialized();',
-          '',
-          '  FlutterError.onError = (FlutterErrorDetails details) {',
-          '    debugPrint(details.exceptionAsString());',
-          '    debugPrintStack(stackTrace: details.stack);',
-          '  };',
-          '',
-          '  await Firebase.initializeApp();',
-          '  runApp(const AlbaManagementApp());',
           '}'
         ].join('\n')
       }
     ],
     myPart: [
       {
-        title: '모바일 중심 일정 관리',
-        body: '근무 일정을 빠르게 등록하고 확인할 수 있도록 Flutter 위젯 구조와 화면 흐름을 구성했습니다.',
+        title: 'Hive 기반 로컬 데이터 구조',
+        body: '근무지, 근무 기록, 사용자 프로필 데이터를 Hive box로 분리해 앱 시작 시 초기화하고 Repository 패턴으로 접근하도록 구성했습니다.',
         codeSnippet: 0
       },
       {
-        title: '예상 급여 계산',
-        body: '시급, 근무 시간, 휴게 시간 정보를 바탕으로 예상 급여를 계산하는 핵심 로직을 설계했습니다.',
+        title: '근무 시간 및 급여 계산',
+        body: '출근/퇴근 시간과 휴게 시간을 기준으로 실제 근무 시간을 계산하고, 시급을 적용해 실제 급여를 산출하는 유틸 로직을 구현했습니다.',
         codeSnippet: 1
       },
       {
-        title: 'Firebase 기반 데이터 설계',
-        body: '근무 일정, 급여 정보, 익명 게시판 데이터를 Firebase에 저장하는 구조를 고려해 화면과 데이터 흐름을 설계했습니다.',
+        title: '근무 기록 저장/조회',
+        body: '근무 기록을 Hive에 저장하고, 근무지별/월별로 조회해 상세 화면과 캘린더 화면에서 재사용할 수 있도록 Repository 메서드를 구성했습니다.',
         codeSnippet: 2
       },
       {
-        title: '앱 실행 오류 분석',
-        body: 'Flutter 앱 실행 중 종료되는 문제를 로그 중심으로 확인하며 실행 환경과 의존성 문제를 분석했습니다.',
+        title: '월간 캘린더 UI',
+        body: '등록된 근무지의 예정 근무와 실제 근무 기록을 월 단위로 합쳐 table_calendar 기반 캘린더에 표시하는 화면 흐름을 구현했습니다.',
         codeSnippet: 3
+      },
+      {
+        title: '익명 커뮤니티 기능',
+        body: '익명 게시글 상세 화면에서 좋아요, 댓글 추가, 댓글 수 갱신을 로컬 상태로 처리해 커뮤니티 사용 흐름을 구성했습니다.',
+        codeSnippet: 4
       }
     ]
   },
   {
     name: 'MBTI Community',
-    image: mbtiImage,
+    image: mbtiMainScreen,
     summary: 'MBTI 기반 커뮤니티 서비스',
     period: 'Team Project',
     team: '6명',
@@ -317,43 +367,50 @@ export const projects = [
       {
         title: 'JWT 로그인 연동',
         body: '로그인 성공 시 서버가 발급한 accessToken, refreshToken, 사용자 정보를 받아 Redux 인증 상태에 저장했습니다.',
-        codeSnippet: 0
+        codeSnippet: 0,
+				image: mbtiLoginImage
       },
       {
         title: 'Authorization 헤더 자동 처리',
         body: 'Axios interceptor를 사용해 인증이 필요한 요청마다 Bearer 토큰을 자동 첨부하고, 로그인/회원가입/refresh 요청은 예외 처리했습니다.',
-        codeSnippet: 1
+        codeSnippet: 1,
+				image: mbtiLoginImage
       },
       {
         title: 'Access Token 재발급 흐름',
         body: '401 응답 발생 시 refresh API를 호출해 새 accessToken을 발급받고, 실패했던 기존 요청을 다시 실행하는 흐름을 구현했습니다.',
-        codeSnippet: 2
+        codeSnippet: 2,
+				image: mbtiLoginImage
       },
       {
         title: '중복 Refresh 요청 방지',
         body: '동시에 여러 요청이 401을 받을 때 refresh 요청이 반복 실행되지 않도록 대기 큐를 두고 토큰 갱신 후 재요청을 처리했습니다.',
-        codeSnippet: 3
+        codeSnippet: 3,
+				image: mbtiLoginImage
       },
       {
         title: '로그인 상태 복구',
         body: 'AuthGate에서 앱 시작 시 refresh 검증을 수행해 새로고침 후에도 로그인 상태를 복구하고, 실패하면 logout 처리했습니다.',
-        codeSnippet: 4
+        codeSnippet: 4,
+				image: mbtiLoginImage
       },
       {
         title: '마이페이지 기능 구현',
         body: 'Redux 사용자 정보와 Bearer 토큰 기반 API를 활용해 프로필, 게임 점수, 작성 게시글 조회 화면을 구성했습니다.',
-        codeSnippet: 5
+        codeSnippet: 5,
+				image: mbtiImage
       },
       {
         title: '회원 정보 수정 모달',
         body: '닉네임, 비밀번호, 프로필 이미지, MBTI 변경 기능을 모달 단위로 분리해 마이페이지 수정 흐름을 구현했습니다.',
-        codeSnippet: 6
+        codeSnippet: 6,
+				image: mbtiImage
       }
     ]
   },
    {
     name: 'ITDA',
-    image: itdaImage,
+    image: itdaMainScreen,
     summary: '대여, 경매, 나눔 기능을 제공하는 웹 플랫폼',
     period: 'Team Project',
     team: '6명',
@@ -504,42 +561,50 @@ export const projects = [
       {
         title: '거래 오픈채팅방 생성',
         body: '게시글 상세에서 선택한 boardId와 거래 정보를 바탕으로 로그인 사용자와 게시글 작성자를 연결하는 채팅방 생성 흐름을 구현했습니다.',
-        codeSnippet: 0
+        codeSnippet: 0,
+				image: itdaChatScreen
       },
       {
         title: '채팅방 DB 연동',
         body: 'CHAT_ROOM, TRANSACTION_CHAT, CHAT_PARTICIPANT 테이블에 채팅방과 구매자/판매자 참여 정보를 함께 저장하도록 구성했습니다.',
-        codeSnippet: 1
+        codeSnippet: 1,
+				image: itdaChatScreen
       },
       {
         title: '중복 채팅방 참여 방지',
         body: 'joinCheck 쿼리로 이미 활성화된 거래 채팅방 참여 데이터가 있는지 확인해 중복 생성 문제를 방지했습니다.',
-        codeSnippet: 2
+        codeSnippet: 2,
+				image: itdaChatScreen
       },
       {
         title: 'STOMP 기반 실시간 채팅',
         body: 'SockJS와 STOMP를 이용해 /stomp에 연결하고 메시지를 /app/chat/sendMessage로 전송한 뒤 /topic/room/{chatRoomId}로 브로드캐스트했습니다.',
-        codeSnippet: 3
+        codeSnippet: 3,
+				image: itdaChatScreen
       },
       {
         title: '채팅 사용자 정보 표시',
         body: '메시지 전송 전 사용자 닉네임과 프로필 이미지를 조회해 채팅 메시지 UI에 함께 표시되도록 연동했습니다.',
-        codeSnippet: 4
+        codeSnippet: 4,
+				image: itdaChatScreen
       },
       {
         title: '실시간 알림 구현',
         body: '채팅 메시지 저장 후 참여자 목록을 조회하고, 보낸 사람을 제외한 사용자에게 CHAT 타입 알림을 DB 저장 및 /topic/alarm/{userId}로 전송했습니다.',
-        codeSnippet: 5
+        codeSnippet: 5,
+				image: itdaChatScreen
       },
       {
         title: '채팅방 나가기 처리',
         body: '채팅방 나가기 시 참여 상태를 비활성화하고 시스템 메시지를 저장/브로드캐스트하는 흐름을 구성했습니다.',
-        codeSnippet: 6
+        codeSnippet: 6,
+				image: itdaChatScreen
       },
       {
         title: 'WebSocket 오류 분석',
         body: 'STOMP 연결 실패와 메시지 수신 문제를 브라우저 콘솔, 서버 로그, 연결 경로를 기준으로 추적해 원인을 분석했습니다.',
-        codeSnippet: 7
+        codeSnippet: 7,
+				image: itdaChatScreen
       }
     ]
   }
@@ -551,3 +616,5 @@ export const timeline = [
   ['Java, Spring, React 팀 프로젝트 경험', '기획, 구현, 오류 분석, 협업 흐름 경험'],
   ['Flutter 모바일 앱 개발', '일정 및 급여 관리 앱 UI/UX와 Firebase 연동']
 ];
+
+
