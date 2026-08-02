@@ -11,7 +11,7 @@ export default function HeroSection() {
         </p>
         <div className="hero-actions">
           <a className="button primary" href="#projects">프로젝트 보기</a>
-          <a className="button ghost" href="https://github.com" target="_blank" rel="noreferrer">GitHub 보기</a>
+          <a className="button ghost" href="https://github.com/DOOUNUT?tab=repositories" target="_blank" rel="noreferrer">GitHub 보기</a>
           <a className="button ghost" href="#contact">연락하기</a>
         </div>
       </div>

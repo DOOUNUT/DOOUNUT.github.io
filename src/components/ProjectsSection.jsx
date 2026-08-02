@@ -1,4 +1,5 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
+import { X } from 'lucide-react';
 import Section from './Section';
 import { projects } from '../data/portfolioData';
 
@@ -49,7 +50,7 @@ export default function ProjectsSection() {
         <div className="project-grid">
           {projects.map((project) => (
             <article
-              className={`project-card ${selectedProject?.name === project.name ? 'selected' : ''}`}
+              className={`project-card ${project.imageType === 'mobile' ? 'mobile-screenshot' : ''} ${selectedProject?.name === project.name ? 'selected' : ''}`}
               key={project.name}
               onClick={() => {
                 setSelectedProject(project);
@@ -78,24 +79,30 @@ export default function ProjectsSection() {
         </div>
 
         {selectedProject && (
-          <aside className="project-detail">
-            <button
-              className="detail-close"
-              type="button"
-              aria-label={text.closeDetail}
-              onClick={() => {
-                setSelectedProject(null);
-                setActiveSnippet(null);
-                setActivePartIndex(null);
-              }}
-            >
-              x
-            </button>
+          <aside
+            className={`project-detail ${
+              selectedProject.imageType === 'mobile' ? 'mobile-screenshot' : ''
+            }`}
+          >
             <div className="detail-image">
               <img src={detailImage} alt={`${selectedProject.name} ${text.detailAlt}`} />
             </div>
             <div className="detail-content">
-              <span className="detail-tag">{selectedProject.role}</span>
+              <div className="detail-header">
+                <span className="detail-tag">{selectedProject.role}</span>
+                <button
+                  className="icon-close detail-close"
+                  type="button"
+                  aria-label={text.closeDetail}
+                  onClick={() => {
+                    setSelectedProject(null);
+                    setActiveSnippet(null);
+                    setActivePartIndex(null);
+                  }}
+                >
+                  <X size={18} strokeWidth={2.4} aria-hidden="true" />
+                </button>
+              </div>
               <h3>{selectedProject.name}</h3>
               <p>{getDescription(selectedProject)}</p>
 
@@ -111,13 +118,14 @@ export default function ProjectsSection() {
                       </div>
                       <button
                         type="button"
+                        className="icon-close"
                         aria-label={text.closeCode}
                         onClick={() => {
                           setActiveSnippet(null);
                           setActivePartIndex(null);
                         }}
                       >
-                        x
+                        <X size={18} strokeWidth={2.4} aria-hidden="true" />
                       </button>
                     </div>
                     {selectedSnippet.description && <p>{selectedSnippet.description}</p>}

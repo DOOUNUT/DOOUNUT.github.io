@@ -1,5 +1,10 @@
 ﻿import { Code2, Database, Layers3, Smartphone, Wrench } from 'lucide-react';
-import albaImage from '../assets/projects/alba-app.png';
+import albaAddJobImage from '../assets/projects/alba-add-job.png';
+import albaCalendarImage from '../assets/projects/alba-calendar.png';
+import albaCommunityImage from '../assets/projects/alba-community.png';
+import albaImage from '../assets/projects/alba-home.png';
+import albaRecordFormImage from '../assets/projects/alba-record-form.png';
+import albaRecordListImage from '../assets/projects/alba-record-list.png';
 import itdaImage from '../assets/projects/itda-chat.png';
 import itdaMainScreen from '../assets/projects/itda-main-screen.png';
 import itdaChatScreen from '../assets/projects/itda-chat-screen.png';
@@ -74,15 +79,17 @@ export const projects = [
   {
     name: 'Alba Management App(진행중)',
     image: albaImage,
-    summary: '아르바이트 일정 및 급여 관리 모바일 앱',
+    imageType: 'mobile',
+    summary: '아르바이트 근무 일정과 급여를 관리하는 모바일 앱',
     period: 'Personal Project',
     team: '개인 프로젝트',
     role: 'Flutter · Hive',
+    github: 'https://github.com/DOOUNUT?tab=repositories',
     imageLabel: 'Schedule · Pay · Mobile UX',
     tech: ['Flutter', 'Dart', 'Hive', 'table_calendar'],
     detailTitle: '핵심 구현',
     description:
-      '아르바이트 근무지, 실제 근무 기록, 급여 통계, 월간 캘린더, 익명 커뮤니티를 관리하는 모바일 앱입니다. Hive 로컬 저장소와 Flutter 위젯 구조를 기반으로 빠르게 기록하고 확인할 수 있는 흐름을 구성했습니다.',
+      '아르바이트 근무지 등록, 실제 근무 기록, 급여 통계, 월간 캘린더, 익명 게시판을 한 흐름에서 관리하는 Flutter 모바일 앱입니다. Hive 로컬 저장소와 Repository 패턴을 적용해 네트워크 없이도 근무 데이터가 유지되도록 구성했습니다.',
     codeSnippets: [
       {
         title: 'Hive 기반 로컬 저장소 초기화',
@@ -201,27 +208,32 @@ export const projects = [
     myPart: [
       {
         title: 'Hive 기반 로컬 데이터 구조',
-        body: '근무지, 근무 기록, 사용자 프로필 데이터를 Hive box로 분리해 앱 시작 시 초기화하고 Repository 패턴으로 접근하도록 구성했습니다.',
+        body: '근무지, 근무 기록, 사용자 프로필 데이터를 Hive box로 분리하고 앱 시작 시 초기화해 Repository 패턴으로 접근하도록 구성했습니다.',
+        image: albaAddJobImage,
         codeSnippet: 0
       },
       {
         title: '근무 시간 및 급여 계산',
-        body: '출근/퇴근 시간과 휴게 시간을 기준으로 실제 근무 시간을 계산하고, 시급을 적용해 실제 급여를 산출하는 유틸 로직을 구현했습니다.',
+        body: '출근/퇴근 시간과 휴게 시간을 기준으로 실제 근무 시간을 계산하고, 시급을 적용해 예상 급여와 실제 급여를 산출하는 유틸 로직을 구현했습니다.',
+        image: albaRecordFormImage,
         codeSnippet: 1
       },
       {
         title: '근무 기록 저장/조회',
-        body: '근무 기록을 Hive에 저장하고, 근무지별/월별로 조회해 상세 화면과 캘린더 화면에서 재사용할 수 있도록 Repository 메서드를 구성했습니다.',
+        body: '근무 기록을 Hive에 저장하고 근무지별/월별로 조회해 상세 화면, 통계 카드, 캘린더 화면에서 재사용할 수 있도록 Repository 메서드를 구성했습니다.',
+        image: albaRecordListImage,
         codeSnippet: 2
       },
       {
         title: '월간 캘린더 UI',
-        body: '등록된 근무지의 예정 근무와 실제 근무 기록을 월 단위로 합쳐 table_calendar 기반 캘린더에 표시하는 화면 흐름을 구현했습니다.',
+        body: '등록된 근무지의 예정 근무와 실제 근무 기록을 월 단위로 합쳐 table_calendar 기반 캘린더에 예정/실근무 표시를 분리했습니다.',
+        image: albaCalendarImage,
         codeSnippet: 3
       },
       {
         title: '익명 커뮤니티 기능',
         body: '익명 게시글 상세 화면에서 좋아요, 댓글 추가, 댓글 수 갱신을 로컬 상태로 처리해 커뮤니티 사용 흐름을 구성했습니다.',
+        image: albaCommunityImage,
         codeSnippet: 4
       }
     ]
@@ -233,6 +245,7 @@ export const projects = [
     period: 'Team Project',
     team: '6명',
     role: 'Login · My Page',
+    github: 'https://github.com/DOOUNUT/MBTI-X',
     imageLabel: 'Community · Game · Chatbot',
     tech: ['React', 'Spring Boot', 'Spring Security', 'JWT', 'Oracle'],
     detailTitle: '내가 맡은 부분',
@@ -415,6 +428,7 @@ export const projects = [
     period: 'Team Project',
     team: '6명',
     role: 'Open Chat · Realtime Alarm',
+    github: 'https://github.com/DOOUNUT/semi-project',
     imageLabel: 'Rental · Auction · Sharing Platform',
     tech: ['Java', 'Spring MVC', 'MyBatis', 'Oracle', 'JSP', 'WebSocket'],
     detailTitle: '내가 맡은 부분',
@@ -616,5 +630,6 @@ export const timeline = [
   ['Java, Spring, React 팀 프로젝트 경험', '기획, 구현, 오류 분석, 협업 흐름 경험'],
   ['Flutter 모바일 앱 개발', '일정 및 급여 관리 앱 UI/UX와 Firebase 연동']
 ];
+
 
 
