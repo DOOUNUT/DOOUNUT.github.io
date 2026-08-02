@@ -20,6 +20,7 @@ const text = {
 const getTechs = (project) => project.techs ?? project.tech ?? [];
 const getDescription = (project) => project.detail ?? project.description ?? project.summary ?? '';
 const getPartDescription = (part) => part.description ?? part.body ?? '';
+const getPartLabel = (project) => project.partLabel ?? text.myPart;
 
 export default function ProjectsSection() {
   const [selectedProject, setSelectedProject] = useState(null);
@@ -107,7 +108,7 @@ export default function ProjectsSection() {
               <p>{getDescription(selectedProject)}</p>
 
               <div className="detail-list">
-                <strong>{text.myPart}</strong>
+                <strong>{getPartLabel(selectedProject)}</strong>
 
                 {selectedSnippet ? (
                   <div className="code-modal-panel inline">

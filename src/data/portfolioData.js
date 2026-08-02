@@ -88,6 +88,7 @@ export const projects = [
     imageLabel: 'Schedule · Pay · Mobile UX',
     tech: ['Flutter', 'Dart', 'Hive', 'table_calendar'],
     detailTitle: '핵심 구현',
+    partLabel: '핵심 기능',
     description:
       '아르바이트 근무지 등록, 실제 근무 기록, 급여 통계, 월간 캘린더, 익명 게시판을 한 흐름에서 관리하는 Flutter 모바일 앱입니다. Hive 로컬 저장소와 Repository 패턴을 적용해 네트워크 없이도 근무 데이터가 유지되도록 구성했습니다.',
     codeSnippets: [
